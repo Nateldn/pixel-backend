@@ -1,7 +1,11 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/connection");
 
-const User = sequelize.define("Image", {
+// do we need that import:
+const User = require("../user/userTable.js");
+
+
+const Image = sequelize.define("Image", {
 
     title:{
         type: DataTypes.STRING,
@@ -14,15 +18,18 @@ const User = sequelize.define("Image", {
         type:DataTypes.BOOLEAN,
         defaultValue: false,
         allowNull: false,
-
     },
 
     img:{
         type: DataTypes.TEXT,
         allowNull: false
-
     } 
 
 });
 
-module.exports = User;
+// Place this right after the schemas have been defined / before sequelize sync?
+User.hasMany(Image);
+Image.belongsTo(User);
+
+
+module.exports = Image;
