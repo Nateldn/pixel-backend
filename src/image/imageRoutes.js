@@ -10,16 +10,16 @@ const { Router } = require("express");
 // use compare and check password
 
 
-const { addUser } = require("./userFunctions");
+// const { addUser } = require("./userFunctions");
 // const { addUser, login, updatePassword, deleteUser } = require("./userFunctions");
-const { hashPassword, decryptPassword, checkToken } = require("../middleware");
-const userRouter = Router();
+// const { hashPassword, decryptPassword, checkToken } = require("../middleware");
+const imageRouter = Router();
 
-userRouter.post("/user", hashPassword, addUser);
+// userRouter.post("/user", hashPassword, addUser);
 // userRouter.post("/user", hashPassword, addUser);
 // userRouter.post("/login", decryptPassword, login);
 // userRouter.get("/user", checkToken, login);
 // userRouter.patch("/user", hashPassword, checkToken, updatePassword);
 // userRouter.delete("/user", checkToken, deleteUser);
 
-module.exports = userRouter;
+module.exports = imageRouter;
