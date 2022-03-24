@@ -21,10 +21,14 @@ const User = sequelize.define("User", {
         
 
     },
-    password:{
+    pass:{
         type:DataTypes.STRING
 
-    }
+    },
+
+    img:{
+        type: DataTypes.TEXT
+    } 
 });
 
 module.exports = User;
