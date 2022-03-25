@@ -37,7 +37,7 @@ exports.checkToken = async (req, res, next) => {
       req.header("Authorization").replace("Bearer ", ""),
       process.env.SECRET
     );
-    req.user = await User.findOne(decodedToken._id);
+    req.user = await User.findOne(decodedToken.id);
     if (req.user) {
       next();
     } else {
