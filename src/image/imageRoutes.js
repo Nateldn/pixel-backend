@@ -20,10 +20,11 @@ const imageRouter = Router();
 
 // create image
 imageRouter.post("/image", checkToken, addImage);
-imageRouter.post("/gallery", checkToken, getImages);
+// get images (should be get really?)
+imageRouter.post("/gallery/:amount/:page", checkToken, getImages);
 
 // return X images starting at Y filtered by privacy OR (user AND privacy)
-// imageRouter.get("/image", checkToken, getImages);
+// imageRouter.get("/gallery", checkToken, getImages);
 
 
 // check if logged in user is owner of image

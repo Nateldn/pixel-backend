@@ -36,10 +36,16 @@ exports.addImage = async (req, res) => {
 // using findAndCountAll
 exports.getImages = async (req, res) => {
   try {
+    // imageRouter.post("/gallery/:amount/:page", checkToken, getImages);
+
       const imagePack = Image.findAndCountAll({
-      limit: 2,
-      offset: 3,
-      where: {}, // conditions
+
+        // req.params.amount;
+        // req.params.page;
+
+        limit: 2,
+        offset: 3,
+        where: {}, // conditions
       });
     res.status(200).send({ imagePack });
   } catch (error) {
@@ -47,6 +53,7 @@ exports.getImages = async (req, res) => {
     res.status(500).send({ err: error.message });
   }
 };
+
 
   
   // which will return the count before an array of rows found
