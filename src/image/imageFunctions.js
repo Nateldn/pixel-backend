@@ -15,16 +15,75 @@ const Image = require("./imageTable");
 //     }
 // };
 
+
+// req.user available after 
+// requires img: dataURL (options: public boool, title: string)
 exports.addImage = async (req, res) => {
   try {
+    // const tempImage = {img: req.body.img, public: true, title: "titled", UserId: req.user.id};
+    req.body.UserId = req.user.id;
+    // const newImage = await Image.create(tempImage);
     const newImage = await Image.create(req.body);
-    const token = await jwt.sign({ _id: newUser._id }, process.env.SECRET);
+    res.status(200).send({ imgID: newImage.id, imgTitle: newImage.title, imgPublic: newImage.public, imgCreator: newImage.UserId});
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ err: error.message });
+  }
+};
+
+exports.addMovie = async (req, res) => {
+  try {
+      const newMovie = await Movie.create(req.body);
+      console.log("here is the request.body", req.body);
+      res.status(200).send({movie: newMovie});
+  } catch (error) {
+      console.log(error);
+      res.status(500).send({err: error.message});
+  }
+}
+
+// return X images starting at Y filtered by privacy OR (user AND privacy)
+
+exports.getImages = async (req, res) => {
+  // try {
+  //   const newImage = await Image.create(req.body);
+  //   const token = await jwt.sign({ _id: newUser._id }, process.env.SECRET);
+  //   res.status(200).send({ user: newUser.username, token });
+  // } catch (error) {
+  //   console.log(error);
+  //   res.status(500).send({ err: error.message });
+  // }
+};
+
+// using findAndCountAll
+exports.displayImages = async (req, res) => {
+  try {
+      const imagePack = Image.findAndCountAll({
+      limit: 2,
+      offset: 3,
+      where: {}, // conditions
+      });
+  Image.create(req.body);
+    const token = await jwt.sign({ id: newUser.id }, process.env.SECRET);
     res.status(200).send({ user: newUser.username, token });
   } catch (error) {
     console.log(error);
     res.status(500).send({ err: error.message });
   }
 };
+
+  
+  // which will return the count before an array of rows found
+  // {
+  // "count": 3,
+  // "rows": [
+  // {
+  // "id": 3,
+  // "title": "This is the title of the object",
+  
+
+
+
 
 
 // exports.updateUser = async (inputObj) => {
@@ -48,33 +107,6 @@ exports.addImage = async (req, res) => {
 //     }
 // };
 
-
-// using findAndCountAll
-exports.displayImages = async (req, res) => {
-    try {
-        const imagePack = Image.findAndCountAll({
-        limit: 2,
-        offset: 3,
-        where: {}, // conditions
-        });
-    Image.create(req.body);
-      const token = await jwt.sign({ _id: newUser._id }, process.env.SECRET);
-      res.status(200).send({ user: newUser.username, token });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ err: error.message });
-    }
-  };
-  
-    
-    // which will return the count before an array of rows found
-    // {
-    // "count": 3,
-    // "rows": [
-    // {
-    // "id": 3,
-    // "title": "This is the title of the object",
-    
 
 
 
