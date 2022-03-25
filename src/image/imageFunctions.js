@@ -31,41 +31,17 @@ exports.addImage = async (req, res) => {
   }
 };
 
-exports.addMovie = async (req, res) => {
-  try {
-      const newMovie = await Movie.create(req.body);
-      console.log("here is the request.body", req.body);
-      res.status(200).send({movie: newMovie});
-  } catch (error) {
-      console.log(error);
-      res.status(500).send({err: error.message});
-  }
-}
-
 // return X images starting at Y filtered by privacy OR (user AND privacy)
 
-exports.getImages = async (req, res) => {
-  // try {
-  //   const newImage = await Image.create(req.body);
-  //   const token = await jwt.sign({ _id: newUser._id }, process.env.SECRET);
-  //   res.status(200).send({ user: newUser.username, token });
-  // } catch (error) {
-  //   console.log(error);
-  //   res.status(500).send({ err: error.message });
-  // }
-};
-
 // using findAndCountAll
-exports.displayImages = async (req, res) => {
+exports.getImages = async (req, res) => {
   try {
       const imagePack = Image.findAndCountAll({
       limit: 2,
       offset: 3,
       where: {}, // conditions
       });
-  Image.create(req.body);
-    const token = await jwt.sign({ id: newUser.id }, process.env.SECRET);
-    res.status(200).send({ user: newUser.username, token });
+    res.status(200).send({ imagePack });
   } catch (error) {
     console.log(error);
     res.status(500).send({ err: error.message });

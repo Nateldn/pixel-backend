@@ -20,6 +20,7 @@ const imageRouter = Router();
 
 // create image
 imageRouter.post("/image", checkToken, addImage);
+imageRouter.post("/gallery", checkToken, getImages);
 
 // return X images starting at Y filtered by privacy OR (user AND privacy)
 // imageRouter.get("/image", checkToken, getImages);

@@ -34,8 +34,10 @@ Image.belongsTo(User);
 // const dropTables = async () => {
 //     await Image.sync({ force: true });
 //     await User.sync({ force: true });
-//     await Image.sync({ force: true });
-//     await User.sync({ force: true });
+
+//     // await User.sync({ force: true });
+//     // await Image.sync({ force: true });
+
 //     console.log("The table for the User and Image model was just (re)created!");
 // }
 
