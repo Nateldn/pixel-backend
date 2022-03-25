@@ -19,7 +19,7 @@ exports.hashPassword = async (req, res, next) => {
 
 exports.decryptPassword = async (req, res, next) => {
   try {
-    req.user = await User.findOne({ username: req.body.username });
+    req.user = await User.findOne({ where: { username: req.body.username }});
     if (await bcrypt.compare(req.body.pass, req.user.pass)) {
       next();
     } else {
@@ -37,7 +37,7 @@ exports.checkToken = async (req, res, next) => {
       req.header("Authorization").replace("Bearer ", ""),
       process.env.SECRET
     );
-    req.user = await User.findOne(decodedToken._id);
+    req.user = await User.findByPk(decodedToken.id);
     if (req.user) {
       next();
     } else {
