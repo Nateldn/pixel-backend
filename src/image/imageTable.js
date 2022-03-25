@@ -10,7 +10,7 @@ const Image = sequelize.define("Image", {
     title:{
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: false,
         defaultValue: "untitled"
     },
 
@@ -31,5 +31,14 @@ const Image = sequelize.define("Image", {
 User.hasMany(Image);
 Image.belongsTo(User);
 
+// const dropTables = async () => {
+//     await Image.sync({ force: true });
+//     await User.sync({ force: true });
+//     await Image.sync({ force: true });
+//     await User.sync({ force: true });
+//     console.log("The table for the User and Image model was just (re)created!");
+// }
+
+// dropTables();
 
 module.exports = Image;
