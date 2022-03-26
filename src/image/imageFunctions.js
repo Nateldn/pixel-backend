@@ -21,11 +21,9 @@ const Image = require("./imageTable");
 // requires img: dataURL (options: public boool, title: string)
 exports.addImage = async (req, res) => {
   try {
-    // const tempImage = {img: req.body.img, public: true, title: "titled", UserId: req.user.id};
     req.body.UserId = req.user.id;
-    // const newImage = await Image.create(tempImage);
     const newImage = await Image.create(req.body);
-    res.status(200).send({ imgID: newImage.id, imgTitle: newImage.title, imgPublic: newImage.public, imgCreator: newImage.UserId});
+    res.status(200).send({ imgID: newImage.id, imgTitle: newImage.title, imgPublic: newImage.public});
   } catch (error) {
     console.log(error);
     res.status(500).send({ err: error.message });
