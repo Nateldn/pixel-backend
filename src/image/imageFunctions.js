@@ -16,25 +16,41 @@ const Image = require("./imageTable");
 //     }
 // };
 
+const isOwner = async (user, imgId) => {
+  console.log("user: ", user, "\nimgId: ", imgId);
+  // let attributes = "UserId";
+  let owner = await Image.findOne({where: {id: imgId}, attributes: ["UserId"] });
+  console.log("owner: ", owner.dataValues.UserId);
+  let ownerId = owner.dataValues.UserId;
+  console.log("owner: ", ownerId);
+  // Model.findAll({
+  //   attributes: ['foo', 'bar']
+  // });
 
-// req.user available after 
+
+  if (parseInt(user) === parseInt(ownerId)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+
+// req.user available after checkToken
 // requires img: dataURL (options: public boool, title: string)
 exports.addImage = async (req, res) => {
   try {
     req.body.UserId = req.user.id;
     const newImage = await Image.create(req.body);
-    res.status(200).send({ imgID: newImage.id, imgTitle: newImage.title, imgPublic: newImage.public});
+    res.status(200).send({ imgId: newImage.id, imgTitle: newImage.title, imgPublic: newImage.public});
   } catch (error) {
     console.log(error);
     res.status(500).send({ err: error.message });
   }
 };
 
-// return X images starting at Y filtered by privacy OR (user AND privacy)
-
-// If (userId AND userId === token) return public and private by user
-// Else if (userId) return public by user
-// Else return all public
+// return X public images starting at Yth image
 exports.getPubImages = async (req, res) => {
   try {
     let query = { 
@@ -48,7 +64,6 @@ exports.getPubImages = async (req, res) => {
     };
 
     if (req.params.who !== "all") {
-      
       let user = await User.findOne({where: {username: req.params.who}});
       query.where.UserId = user.id;
     };
@@ -63,6 +78,7 @@ exports.getPubImages = async (req, res) => {
   }
 };
 
+// return X images by the user logged in starting at Yth image
 exports.getAllImages = async (req, res) => {
   try {
     let query = { 
@@ -85,31 +101,41 @@ exports.getAllImages = async (req, res) => {
   }
 };
 
-  
-  // which will return the count before an array of rows found
-  // {
-  // "count": 3,
-  // "rows": [
-  // {
-  // "id": 3,
-  // "title": "This is the title of the object",
-  
+// req.user available after checkToken
+exports.updateImage = async (req, res) => {
+  try {
+    let isOwnerBool = await isOwner(req.user.id, req.body.id);
+    if (!isOwnerBool){
+      throw new Error("The user is not the owner of this image.");
+    }
+    
+    // const updateUser = await User.update(
+    //   {pass: req.body.pass},
+    //   {where:{id: req.user.id }}
+
+    const updatedImage = await Image.update(
+      req.body,
+      {where:{id: req.body.id }}
+      );
+
+      if (updatedImage[0] === 1){
+          res.status(200).send({msg: "successfully updated image"});
+        } else {
+          throw new Error("Did not update");
+        }
+    } catch(error){
+     console.log(error);
+     res.status(500).send({err: error.message});
+    }
+};
 
 
 
 
 
-// exports.updateUser = async (inputObj) => {
-//     try {
-//         return await User.update({ pass: inputObj.newPass }, {
-//             where: {
-//               actor: inputObj.oldActor
-//             }
-//           });
-//     } catch (error) {
-//         console.log(error, "It did not update")
-//     }
-// };
+
+
+
 
 // exports.deleteUser = async (filterObj) => {
 //     try {

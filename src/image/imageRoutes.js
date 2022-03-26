@@ -12,9 +12,9 @@ const { Router } = require("express");
 
 // const { addUser, login, updatePassword, deleteUser } = require("../user/userFunctions");
 
-const { addImage, getPubImages, getAllImages } = require("./imageFunctions");
+const { addImage, getPubImages, getAllImages, updateImage } = require("./imageFunctions");
 
-const { hashPassword, decryptPassword, checkToken } = require("../middleware");
+const { checkToken } = require("../middleware");
 const imageRouter = Router();
 
 
@@ -23,9 +23,10 @@ imageRouter.post("/image", checkToken, addImage);
 // get images (should be get really?)
 imageRouter.get("/gallery/:who/:amount/:page", getPubImages);
 imageRouter.get("/mygallery/:amount/:page", checkToken, getAllImages);
-// logged in user is the creator of this picture?
 // make image private
 // update image
+imageRouter.patch("/image", checkToken, updateImage);
+
 // delete image
 
 
