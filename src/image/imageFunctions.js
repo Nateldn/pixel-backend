@@ -1,6 +1,7 @@
 //@ts-check
 
 const jwt = require("jsonwebtoken");
+const User = require("../user/userTable");
 const Image = require("./imageTable");
 
 
@@ -20,52 +21,64 @@ const Image = require("./imageTable");
 // requires img: dataURL (options: public boool, title: string)
 exports.addImage = async (req, res) => {
   try {
-    // const tempImage = {img: req.body.img, public: true, title: "titled", UserId: req.user.id};
     req.body.UserId = req.user.id;
-    // const newImage = await Image.create(tempImage);
     const newImage = await Image.create(req.body);
-    res.status(200).send({ imgID: newImage.id, imgTitle: newImage.title, imgPublic: newImage.public, imgCreator: newImage.UserId});
+    res.status(200).send({ imgID: newImage.id, imgTitle: newImage.title, imgPublic: newImage.public});
   } catch (error) {
     console.log(error);
     res.status(500).send({ err: error.message });
   }
 };
 
-exports.addMovie = async (req, res) => {
-  try {
-      const newMovie = await Movie.create(req.body);
-      console.log("here is the request.body", req.body);
-      res.status(200).send({movie: newMovie});
-  } catch (error) {
-      console.log(error);
-      res.status(500).send({err: error.message});
-  }
-}
-
 // return X images starting at Y filtered by privacy OR (user AND privacy)
 
-exports.getImages = async (req, res) => {
-  // try {
-  //   const newImage = await Image.create(req.body);
-  //   const token = await jwt.sign({ _id: newUser._id }, process.env.SECRET);
-  //   res.status(200).send({ user: newUser.username, token });
-  // } catch (error) {
-  //   console.log(error);
-  //   res.status(500).send({ err: error.message });
-  // }
+// If (userId AND userId === token) return public and private by user
+// Else if (userId) return public by user
+// Else return all public
+exports.getPubImages = async (req, res) => {
+  try {
+    let query = { 
+      limit: parseInt(req.params.amount),
+      offset: 0,
+      where: {public: true}
+    };
+      
+    if (req.params.page != 1) {
+      query.offset = req.params.amount * (req.params.page - 1) ;
+    };
+
+    if (req.params.who !== "all") {
+      
+      let user = await User.findOne({where: {username: req.params.who}});
+      query.where.UserId = user.id;
+    };
+
+    const imagePack = await Image.findAndCountAll(query);
+
+    res.status(200).send({ imagePack });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ err: error.message });
+  }
 };
 
-// using findAndCountAll
-exports.displayImages = async (req, res) => {
+exports.getAllImages = async (req, res) => {
   try {
-      const imagePack = Image.findAndCountAll({
-      limit: 2,
-      offset: 3,
-      where: {}, // conditions
-      });
-  Image.create(req.body);
-    const token = await jwt.sign({ id: newUser.id }, process.env.SECRET);
-    res.status(200).send({ user: newUser.username, token });
+    let query = { 
+      limit: parseInt(req.params.amount),
+      offset: 0,
+      where: {UserId: req.user.id}
+    };
+      
+    if (req.params.page != 1) {
+      query.offset = req.params.amount * (req.params.page - 1) ;
+    };
+
+    const imagePack = await Image.findAndCountAll(query);
+
+    res.status(200).send({ imagePack });
+
   } catch (error) {
     console.log(error);
     res.status(500).send({ err: error.message });

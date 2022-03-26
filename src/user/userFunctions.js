@@ -38,7 +38,6 @@ exports.login = async (req, res) => {
 };
 
 
-// return await Movie.update({[key]:updatevalue},{where:{[key]:where}});
 
 exports.updatePass = async (req, res ) =>{
      try{
