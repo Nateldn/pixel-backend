@@ -36,7 +36,7 @@ exports.getDetails = async (req, res) => {
     console.log(imgDetails);
 
     imgDetails.UserId = await User.findOne({where: {id: imgDetails.UserId}, attributes: ["username"] });
-    console.log(imgDetails);
+    imgDetails.UserId = imgDetails.UserId.username;
 
     // console.log("owner: ", owner);
     res.status(200).send(imgDetails);
@@ -45,6 +45,27 @@ exports.getDetails = async (req, res) => {
     res.status(500).send({ err: error.message });
   }
 };
+
+exports.getOneImage = async (req, res) => {
+  try {
+    // limit: parseInt(req.params.amount),
+    let img = await Image.findOne({where: {id: parseInt(req.params.imgId)}});
+    console.log(img);
+
+    img.UserId = await User.findOne({where: {id: img.UserId}, attributes: ["username"] });
+    img.UserId = img.UserId.username;
+
+    // console.log("owner: ", owner);
+    res.status(200).send(img);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ err: error.message });
+  }
+};
+
+
+
+
 
 
 // req.user available after checkToken
@@ -135,83 +156,3 @@ exports.updateImage = async (req, res) => {
      res.status(500).send({err: error.message});
     }
 };
-
-
-
-
-
-
-
-
-
-// exports.deleteUser = async (filterObj) => {
-//     try {
-//         return await User.destroy({
-//             where: filterObj});
-//     } catch (error) {
-//         console.log(error, "It did not update")
-//     }
-// };
-
-
-
-
-
-// MONGOOSE CONTROLLERS
-// NEED ADAPTATION
-
-// exports.addUser = async (req, res) => {
-//   try {
-//     const newUser = await User.create(req.body);
-//     const token = await jwt.sign({ _id: newUser._id }, process.env.SECRET);
-//     res.status(200).send({ user: newUser.username, token });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({ err: error.message });
-//   }
-// };
-
-// exports.login = async (req, res) => {
-//   try {
-//     res.status(200).send({ user: req.user.username });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({ err: error.message });
-//   }
-// };
-
-// exports.updatePassword = async (req, res) => {
-//   try {
-//     const updatedUser = await User.updateOne(
-//       { username: req.user.username },
-//       { password: req.body.password }
-//     );
-//     if (updatedUser.modifiedCount > 0) {
-//       res.status(200).send({ msg: "Successfully updated user" });
-//     } else {
-//       throw new Error("Did not update");
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({ err: error.message });
-//   }
-// };
-
-// exports.deleteUser = async (req, res) => {
-//   try {
-//     const deletedUser = await User.destroy(
-//       { username: req.user.username }
-//     );
-//     console.log(deletedUser);
-//     if (deletedUser.deletedCount > 0) {
-//       res.status(200).send({ msg: "Successfully deleted user" });
-//     } else {
-//       throw new Error("Did not delete user");
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({ err: error.message });
-//   }
-// };
-
-
