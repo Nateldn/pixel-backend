@@ -8,7 +8,7 @@ MYSQL_URI, PORT and SECRET.
 You can import the `curl` commands in Insomnia (or Amnesia if that's more your style). Simply pasting the whole command in the url bar should work and import everything!
 
 
-# Create a user:
+## Create a user:
 
 Requires:
     `username`, `pass` and `email`.
@@ -28,7 +28,7 @@ curl -d '{"username": "pato52", "email": "pato52@gmail.com", "pass": "test123"}'
 {"user":"pato52","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwiaWF0IjoxNjQ4MjU5MjQ4fQ.KdDhHjJCjRP7Yrf-2ELbCSS6k1PY2JBpbKPZtBhm2NQ"}
 ```
 
-# Create an image
+## Create an image
 
 Requires:
     `img` the dataURL representation of the image
@@ -51,7 +51,7 @@ curl -d '{"img": "this would be the dataURL for that image", "public": "true", "
 ```
 
 
-# Getting public images:
+## Getting public images:
 
 Requires:
     just a working url
@@ -80,7 +80,7 @@ curl -X GET http://localhost:5000/gallery/pato52/2/1
 ```
 
 
-# Getting public and private images for logged in user
+## Getting public and private images for logged in user
 
 Requires:
     `Authorization` with the `token` in the header
