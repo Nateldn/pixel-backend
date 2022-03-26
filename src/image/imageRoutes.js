@@ -4,7 +4,7 @@ const { Router } = require("express");
 
 // const { addUser, login, updatePassword, deleteUser } = require("../user/userFunctions");
 
-const { addImage, getPubImages, getAllImages, updateImage, getDetails, getOneImage } = require("./imageFunctions");
+const { addImage, getPubImages, getAllImages, updateImage, getDetails, getOneImage, deleteImage } = require("./imageFunctions");
 
 const { checkToken } = require("../middleware");
 const imageRouter = Router();
@@ -23,7 +23,7 @@ imageRouter.get("/details/:imgId", getDetails);
 // returns the image details WITHOUT the actual image
 imageRouter.get("/image/:imgId", getOneImage);
 // delete image
-// imageRouter.delete("/user", checkToken, deleteImage);
+imageRouter.delete("/image/:imgId", checkToken, deleteImage);
 
 
 

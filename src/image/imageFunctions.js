@@ -63,11 +63,6 @@ exports.getOneImage = async (req, res) => {
   }
 };
 
-
-
-
-
-
 // req.user available after checkToken
 // requires img: dataURL (options: public boool, title: string)
 exports.addImage = async (req, res) => {
@@ -155,4 +150,29 @@ exports.updateImage = async (req, res) => {
      console.log(error);
      res.status(500).send({err: error.message});
     }
+};
+
+
+// req.user available after checkToken
+exports.deleteImage = async (req, res) => {
+  try {
+    let isOwnerBool = await isOwner(req.user.id, req.params.imgId);
+    if (!isOwnerBool){
+      throw new Error("The user is not the owner of this image.");
+    }
+
+    const deletedImage = await Image.destroy(
+      {where:{id: req.params.imgId }}
+      );
+
+      if (deletedImage === 1){
+        res.status(200).send({msg: "successfully deleted image"});
+    } else {
+        throw new Error("Did not delete");
+    }
+
+  } catch(error){
+     console.log(error);
+     res.status(500).send({err: error.message});
+  }
 };
