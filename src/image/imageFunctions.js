@@ -16,25 +16,35 @@ const Image = require("./imageTable");
 //     }
 // };
 
+
+// don't forget to await when calling
 const isOwner = async (user, imgId) => {
-  console.log("user: ", user, "\nimgId: ", imgId);
-  // let attributes = "UserId";
   let owner = await Image.findOne({where: {id: imgId}, attributes: ["UserId"] });
-  console.log("owner: ", owner.dataValues.UserId);
-  let ownerId = owner.dataValues.UserId;
-  console.log("owner: ", ownerId);
-  // Model.findAll({
-  //   attributes: ['foo', 'bar']
-  // });
-
-
-  if (parseInt(user) === parseInt(ownerId)) {
+  owner = owner.dataValues.UserId;
+  // console.log("owner: ", owner);
+  if (parseInt(user) === parseInt(owner)) {
     return true;
   } else {
     return false;
   }
 }
 
+exports.getDetails = async (req, res) => {
+  try {
+    // limit: parseInt(req.params.amount),
+    let imgDetails = await Image.findOne({where: {id: parseInt(req.params.imgId)}, attributes: {exclude: ["img"]} });
+    console.log(imgDetails);
+
+    imgDetails.UserId = await User.findOne({where: {id: imgDetails.UserId}, attributes: ["username"] });
+    console.log(imgDetails);
+
+    // console.log("owner: ", owner);
+    res.status(200).send(imgDetails);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ err: error.message });
+  }
+};
 
 
 // req.user available after checkToken
@@ -108,10 +118,6 @@ exports.updateImage = async (req, res) => {
     if (!isOwnerBool){
       throw new Error("The user is not the owner of this image.");
     }
-    
-    // const updateUser = await User.update(
-    //   {pass: req.body.pass},
-    //   {where:{id: req.user.id }}
 
     const updatedImage = await Image.update(
       req.body,
@@ -123,6 +129,7 @@ exports.updateImage = async (req, res) => {
         } else {
           throw new Error("Did not update");
         }
+
     } catch(error){
      console.log(error);
      res.status(500).send({err: error.message});
