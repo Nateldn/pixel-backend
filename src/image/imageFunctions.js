@@ -52,7 +52,9 @@ exports.getOneImage = async (req, res) => {
     let img = await Image.findOne({where: {id: parseInt(req.params.imgId)}});
     console.log(img);
 
-    img.UserId = await User.findOne({where: {id: img.UserId}, attributes: ["username"] });
+    img.UserId = await User.findOne({
+      where: {id: img.UserId},
+      attributes: ["username"] });
     img.UserId = img.UserId.username;
 
     // console.log("owner: ", owner);
@@ -94,6 +96,7 @@ exports.getPubImages = async (req, res) => {
       query.where.UserId = user.id;
     };
 
+    query.order = [['updatedAt', 'DESC']];
     const imagePack = await Image.findAndCountAll(query);
 
     res.status(200).send({ imagePack });
@@ -116,6 +119,8 @@ exports.getAllImages = async (req, res) => {
     if (req.params.page != 1) {
       query.offset = req.params.amount * (req.params.page - 1) ;
     };
+
+    query.order = [['updatedAt', 'DESC']];
 
     const imagePack = await Image.findAndCountAll(query);
 
