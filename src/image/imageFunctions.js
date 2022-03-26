@@ -1,6 +1,7 @@
 //@ts-check
 
 const jwt = require("jsonwebtoken");
+const User = require("../user/userTable");
 const Image = require("./imageTable");
 
 
@@ -33,27 +34,58 @@ exports.addImage = async (req, res) => {
 
 // return X images starting at Y filtered by privacy OR (user AND privacy)
 
-// using findAndCountAll
-exports.getImages = async (req, res) => {
+// If (userId AND userId === token) return public and private by user
+// Else if (userId) return public by user
+// Else return all public
+exports.getPubImages = async (req, res) => {
   try {
-    // imageRouter.post("/gallery/:amount/:page", checkToken, getImages);
+    let query = { 
+      limit: parseInt(req.params.amount),
+      offset: 0,
+      where: {public: true}
+    };
+      
+    if (req.params.page != 1) {
+      query.offset = req.params.amount * (req.params.page - 1) ;
+    };
 
-      const imagePack = Image.findAndCountAll({
+    if (req.params.who !== "all") {
+      
+      let user = await User.findOne({where: {username: req.params.who}});
+      query.where.UserId = user.id;
+    };
 
-        // req.params.amount;
-        // req.params.page;
+    const imagePack = await Image.findAndCountAll(query);
 
-        limit: 2,
-        offset: 3,
-        where: {}, // conditions
-      });
     res.status(200).send({ imagePack });
+
   } catch (error) {
     console.log(error);
     res.status(500).send({ err: error.message });
   }
 };
 
+exports.getAllImages = async (req, res) => {
+  try {
+    let query = { 
+      limit: parseInt(req.params.amount),
+      offset: 0,
+      where: {UserId: req.user.id}
+    };
+      
+    if (req.params.page != 1) {
+      query.offset = req.params.amount * (req.params.page - 1) ;
+    };
+
+    const imagePack = await Image.findAndCountAll(query);
+
+    res.status(200).send({ imagePack });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ err: error.message });
+  }
+};
 
   
   // which will return the count before an array of rows found

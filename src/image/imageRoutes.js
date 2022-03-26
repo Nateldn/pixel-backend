@@ -12,7 +12,7 @@ const { Router } = require("express");
 
 // const { addUser, login, updatePassword, deleteUser } = require("../user/userFunctions");
 
-const { addImage, getImages } = require("./imageFunctions");
+const { addImage, getPubImages, getAllImages } = require("./imageFunctions");
 
 const { hashPassword, decryptPassword, checkToken } = require("../middleware");
 const imageRouter = Router();
@@ -21,7 +21,14 @@ const imageRouter = Router();
 // create image
 imageRouter.post("/image", checkToken, addImage);
 // get images (should be get really?)
-imageRouter.post("/gallery/:amount/:page", checkToken, getImages);
+imageRouter.get("/gallery/:who/:amount/:page", getPubImages);
+imageRouter.get("/mygallery/:amount/:page", checkToken, getAllImages);
+// logged in user is the creator of this picture?
+// make image private
+// update image
+// delete image
+
+
 
 // return X images starting at Y filtered by privacy OR (user AND privacy)
 // imageRouter.get("/gallery", checkToken, getImages);
