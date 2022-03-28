@@ -1,18 +1,10 @@
 //@ts-check
 
 const { Router } = require("express");
-// const { addUser } = require("./userControllers");
-// const { hashPassword } = require("../middleware");
-// const userRouter = Router();
-
-// userRouter.post("/user", hashPassword, addUser);
-
-// use compare and check password
-
 
 // const { addUser, login, updatePassword, deleteUser } = require("../user/userFunctions");
 
-const { addImage, getPubImages, getAllImages, updateImage } = require("./imageFunctions");
+const { addImage, getPubImages, getAllImages, updateImage, getDetails, getOneImage, deleteImage } = require("./imageFunctions");
 
 const { checkToken } = require("../middleware");
 const imageRouter = Router();
@@ -26,8 +18,12 @@ imageRouter.get("/mygallery/:amount/:page", checkToken, getAllImages);
 // make image private
 // update image
 imageRouter.patch("/image", checkToken, updateImage);
-
+// returns the image details WITHOUT the actual image
+imageRouter.get("/details/:imgId", getDetails);
+// returns the image details WITHOUT the actual image
+imageRouter.get("/image/:imgId", getOneImage);
 // delete image
+imageRouter.delete("/image/:imgId", checkToken, deleteImage);
 
 
 

@@ -16,26 +16,54 @@ const Image = require("./imageTable");
 //     }
 // };
 
+
+// don't forget to await when calling
 const isOwner = async (user, imgId) => {
-  console.log("user: ", user, "\nimgId: ", imgId);
-  // let attributes = "UserId";
   let owner = await Image.findOne({where: {id: imgId}, attributes: ["UserId"] });
-  console.log("owner: ", owner.dataValues.UserId);
-  let ownerId = owner.dataValues.UserId;
-  console.log("owner: ", ownerId);
-  // Model.findAll({
-  //   attributes: ['foo', 'bar']
-  // });
-
-
-  if (parseInt(user) === parseInt(ownerId)) {
+  owner = owner.dataValues.UserId;
+  // console.log("owner: ", owner);
+  if (parseInt(user) === parseInt(owner)) {
     return true;
   } else {
     return false;
   }
 }
 
+exports.getDetails = async (req, res) => {
+  try {
+    // limit: parseInt(req.params.amount),
+    let imgDetails = await Image.findOne({where: {id: parseInt(req.params.imgId)}, attributes: {exclude: ["img"]} });
+    console.log(imgDetails);
 
+    imgDetails.UserId = await User.findOne({where: {id: imgDetails.UserId}, attributes: ["username"] });
+    imgDetails.UserId = imgDetails.UserId.username;
+
+    // console.log("owner: ", owner);
+    res.status(200).send(imgDetails);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ err: error.message });
+  }
+};
+
+exports.getOneImage = async (req, res) => {
+  try {
+    // limit: parseInt(req.params.amount),
+    let img = await Image.findOne({where: {id: parseInt(req.params.imgId)}});
+    console.log(img);
+
+    img.UserId = await User.findOne({
+      where: {id: img.UserId},
+      attributes: ["username"] });
+    img.UserId = img.UserId.username;
+
+    // console.log("owner: ", owner);
+    res.status(200).send(img);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ err: error.message });
+  }
+};
 
 // req.user available after checkToken
 // requires img: dataURL (options: public boool, title: string)
@@ -68,6 +96,7 @@ exports.getPubImages = async (req, res) => {
       query.where.UserId = user.id;
     };
 
+    query.order = [['updatedAt', 'DESC']];
     const imagePack = await Image.findAndCountAll(query);
 
     res.status(200).send({ imagePack });
@@ -91,6 +120,8 @@ exports.getAllImages = async (req, res) => {
       query.offset = req.params.amount * (req.params.page - 1) ;
     };
 
+    query.order = [['updatedAt', 'DESC']];
+
     const imagePack = await Image.findAndCountAll(query);
 
     res.status(200).send({ imagePack });
@@ -108,10 +139,6 @@ exports.updateImage = async (req, res) => {
     if (!isOwnerBool){
       throw new Error("The user is not the owner of this image.");
     }
-    
-    // const updateUser = await User.update(
-    //   {pass: req.body.pass},
-    //   {where:{id: req.user.id }}
 
     const updatedImage = await Image.update(
       req.body,
@@ -123,6 +150,7 @@ exports.updateImage = async (req, res) => {
         } else {
           throw new Error("Did not update");
         }
+
     } catch(error){
      console.log(error);
      res.status(500).send({err: error.message});
@@ -130,81 +158,26 @@ exports.updateImage = async (req, res) => {
 };
 
 
+// req.user available after checkToken
+exports.deleteImage = async (req, res) => {
+  try {
+    let isOwnerBool = await isOwner(req.user.id, req.params.imgId);
+    if (!isOwnerBool){
+      throw new Error("The user is not the owner of this image.");
+    }
 
+    const deletedImage = await Image.destroy(
+      {where:{id: req.params.imgId }}
+      );
 
+      if (deletedImage === 1){
+        res.status(200).send({msg: "successfully deleted image"});
+    } else {
+        throw new Error("Did not delete");
+    }
 
-
-
-
-
-// exports.deleteUser = async (filterObj) => {
-//     try {
-//         return await User.destroy({
-//             where: filterObj});
-//     } catch (error) {
-//         console.log(error, "It did not update")
-//     }
-// };
-
-
-
-
-
-// MONGOOSE CONTROLLERS
-// NEED ADAPTATION
-
-// exports.addUser = async (req, res) => {
-//   try {
-//     const newUser = await User.create(req.body);
-//     const token = await jwt.sign({ _id: newUser._id }, process.env.SECRET);
-//     res.status(200).send({ user: newUser.username, token });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({ err: error.message });
-//   }
-// };
-
-// exports.login = async (req, res) => {
-//   try {
-//     res.status(200).send({ user: req.user.username });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({ err: error.message });
-//   }
-// };
-
-// exports.updatePassword = async (req, res) => {
-//   try {
-//     const updatedUser = await User.updateOne(
-//       { username: req.user.username },
-//       { password: req.body.password }
-//     );
-//     if (updatedUser.modifiedCount > 0) {
-//       res.status(200).send({ msg: "Successfully updated user" });
-//     } else {
-//       throw new Error("Did not update");
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({ err: error.message });
-//   }
-// };
-
-// exports.deleteUser = async (req, res) => {
-//   try {
-//     const deletedUser = await User.destroy(
-//       { username: req.user.username }
-//     );
-//     console.log(deletedUser);
-//     if (deletedUser.deletedCount > 0) {
-//       res.status(200).send({ msg: "Successfully deleted user" });
-//     } else {
-//       throw new Error("Did not delete user");
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({ err: error.message });
-//   }
-// };
-
-
+  } catch(error){
+     console.log(error);
+     res.status(500).send({err: error.message});
+  }
+};
