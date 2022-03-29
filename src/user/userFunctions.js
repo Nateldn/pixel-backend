@@ -82,8 +82,8 @@ exports.deleteUser = async (req, res) => {
   
    exports.updateImageProfile = async (req, res ) =>{
     try{
-      const updateUserprofile = await Image.update(
-       req.body,
+      const updateUserprofile = await User.update(
+       {pass:req.body.img},
         {where:{id: req.user.id }}
  
         );
