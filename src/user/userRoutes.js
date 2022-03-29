@@ -20,6 +20,6 @@ userRouter.post("/login", decryptPassword, login);
 userRouter.get("/user", checkToken, login);
 userRouter.patch("/user", hashPassword, checkToken, updatePass);
 userRouter.delete("/user", checkToken, deleteUser);
-userRouter.patch("/image", checkToken, updateImageProfile);
+userRouter.patch("/user-image", checkToken, updateImageProfile);
 
 module.exports = userRouter;
