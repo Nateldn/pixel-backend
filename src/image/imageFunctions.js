@@ -99,6 +99,12 @@ exports.getPubImages = async (req, res) => {
     query.order = [['updatedAt', 'DESC']];
     const imagePack = await Image.findAndCountAll(query);
 
+
+    // imagePack.rows.map(image => {image.UserId = req.user.username});
+    imagePack.rows.map(image => {
+      image.UserId = await User.findOne({where: {id: image.UserId}, attributes: ["username"] });
+    });
+
     res.status(200).send({ imagePack });
 
   } catch (error) {
@@ -123,6 +129,7 @@ exports.getAllImages = async (req, res) => {
     query.order = [['updatedAt', 'DESC']];
 
     const imagePack = await Image.findAndCountAll(query);
+    imagePack.rows.map(image => {image.UserId = req.user.username});
 
     res.status(200).send({ imagePack });
 
