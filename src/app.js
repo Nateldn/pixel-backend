@@ -50,9 +50,6 @@ app.use(imageRouter);
 
 
 
-
-
-
 async function checkDBconnection() {
 	console.log(`Checking database connection...`);
 	try {
@@ -73,7 +70,7 @@ async function server() {
 	console.log(`Starting server on port ${port}...`);
 
 	app.listen(port, () => {
-		console.log(`Server started on port ${port}.`);
+		console.log(`Server started on port ${port}`);
 	});
 }
 

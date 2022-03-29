@@ -11,7 +11,7 @@ const { Router } = require("express");
 // use compare and check password
 
 
-const { addUser,login,updatePass, deleteUser } = require("./userFunctions");
+const { addUser,login,updatePass, deleteUser,updateImageProfile } = require("./userFunctions");
 const { hashPassword, decryptPassword, checkToken } = require("../middleware");
 const userRouter = Router();
 
@@ -20,5 +20,6 @@ userRouter.post("/login", decryptPassword, login);
 userRouter.get("/user", checkToken, login);
 userRouter.patch("/user", hashPassword, checkToken, updatePass);
 userRouter.delete("/user", checkToken, deleteUser);
+userRouter.patch("/image", checkToken, updateImageProfile);
 
 module.exports = userRouter;

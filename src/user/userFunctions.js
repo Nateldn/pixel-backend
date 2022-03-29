@@ -77,3 +77,28 @@ exports.deleteUser = async (req, res) => {
       res.status(500).send({ err: error.message });
      }
    };
+
+  
+  
+   exports.updateImageProfile = async (req, res ) =>{
+    try{
+      const updateUserprofile = await Image.update(
+       req.body,
+        {where:{id: req.user.id }}
+ 
+        );
+        console.log(updateUserprofile)
+        if (updateUserprofile[0] === 1){
+          res.status(200).send({msg: "successfully update profile"});
+        } else {
+          throw new Error("Did not update profile");
+        }
+    } catch(error){
+     console.log(error);
+      res.status(500).send({err: error.message});
+    }
+
+   };
+
+
+ 
