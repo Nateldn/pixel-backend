@@ -146,8 +146,9 @@ exports.updateImage = async (req, res) => {
       );
 
       if (updatedImage[0] === 1){
-          res.status(200).send({msg: "successfully updated image"});
-        } else {
+        res.status(200).send({imgId: req.body.id});
+        // res.status(200).send({msg: "successfully updated image"});
+      } else {
           throw new Error("Did not update");
         }
 
