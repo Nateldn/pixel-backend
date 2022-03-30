@@ -32,11 +32,16 @@ const isOwner = async (user, imgId) => {
 exports.getDetails = async (req, res) => {
   try {
     // limit: parseInt(req.params.amount),
-    let imgDetails = await Image.findOne({where: {id: parseInt(req.params.imgId)}, attributes: {exclude: ["img"]} });
+    // let imgDetails = await Image.findOne({where: {id: parseInt(req.params.imgId)}, attributes: {exclude: ["img"]} });
+    // console.log(imgDetails);
+
+    let imgDetails = await Image.findOne({where: {id: parseInt(req.params.imgId)}, attributes: {exclude: ["img"]}, include: [
+      { model: User, attributes: ["username"] }
+    ] });
+
+
     console.log(imgDetails);
 
-    imgDetails.UserId = await User.findOne({where: {id: imgDetails.UserId}, attributes: ["username"] });
-    imgDetails.UserId = imgDetails.UserId.username;
 
     // console.log("owner: ", owner);
     res.status(200).send(imgDetails);
@@ -48,17 +53,18 @@ exports.getDetails = async (req, res) => {
 
 exports.getOneImage = async (req, res) => {
   try {
-    // limit: parseInt(req.params.amount),
-    let img = await Image.findOne({where: {id: parseInt(req.params.imgId)}});
-    console.log(img);
+    let img = await Image.findOne({
+      where: {
+        id: parseInt(req.params.imgId)
+      }, include: [
+        { model: User, attributes: ["username"] }
+      ]
+      }
+    );
+console.log(img);
 
-    img.UserId = await User.findOne({
-      where: {id: img.UserId},
-      attributes: ["username"] });
-    img.UserId = img.UserId.username;
-
-    // console.log("owner: ", owner);
     res.status(200).send(img);
+
   } catch (error) {
     console.log(error);
     res.status(500).send({ err: error.message });
@@ -84,26 +90,18 @@ exports.getPubImages = async (req, res) => {
     let query = { 
       limit: parseInt(req.params.amount),
       offset: 0,
-      where: {public: true}
+      where: {public: true},
+      order: [['updatedAt', 'DESC']],
+      include: [
+        { model: User, attributes: ["username"] }
+      ]
     };
       
     if (req.params.page != 1) {
       query.offset = req.params.amount * (req.params.page - 1) ;
     };
 
-    if (req.params.who !== "all") {
-      let user = await User.findOne({where: {username: req.params.who}});
-      query.where.UserId = user.id;
-    };
-
-    query.order = [['updatedAt', 'DESC']];
     const imagePack = await Image.findAndCountAll(query);
-
-
-    // imagePack.rows.map(image => {image.UserId = req.user.username});
-    imagePack.rows.map(image => {
-      image.UserId = await User.findOne({where: {id: image.UserId}, attributes: ["username"] });
-    });
 
     res.status(200).send({ imagePack });
 
@@ -119,17 +117,18 @@ exports.getAllImages = async (req, res) => {
     let query = { 
       limit: parseInt(req.params.amount),
       offset: 0,
-      where: {UserId: req.user.id}
+      where: {UserId: req.user.id},
+      order: [['updatedAt', 'DESC']],
+      include: [
+        { model: User, attributes: ["username"] }
+      ]
     };
       
     if (req.params.page != 1) {
       query.offset = req.params.amount * (req.params.page - 1) ;
     };
 
-    query.order = [['updatedAt', 'DESC']];
-
     const imagePack = await Image.findAndCountAll(query);
-    imagePack.rows.map(image => {image.UserId = req.user.username});
 
     res.status(200).send({ imagePack });
 
