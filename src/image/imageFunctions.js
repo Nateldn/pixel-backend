@@ -1,6 +1,5 @@
 //@ts-check
 
-const jwt = require("jsonwebtoken");
 const User = require("../user/userTable");
 const Image = require("./imageTable");
 
@@ -96,7 +95,14 @@ exports.getPubImages = async (req, res) => {
         { model: User, attributes: ["username"] }
       ]
     };
-      
+
+    if (req.params.who != "all") {
+      query.include = [
+        { model: User, attributes: ["username"], where: {username: req.params.who} }
+      ]
+    };
+
+
     if (req.params.page != 1) {
       query.offset = req.params.amount * (req.params.page - 1) ;
     };
