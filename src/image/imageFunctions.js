@@ -36,7 +36,7 @@ exports.getDetails = async (req, res) => {
     // console.log(imgDetails);
 
     let imgDetails = await Image.findOne({where: {id: parseInt(req.params.imgId)}, attributes: {exclude: ["img"]}, include: [
-      { model: User, attributes: ["username"] }
+      { model: User, attributes: ["username", "img"] }
     ] });
 
 
@@ -57,7 +57,7 @@ exports.getOneImage = async (req, res) => {
       where: {
         id: parseInt(req.params.imgId)
       }, include: [
-        { model: User, attributes: ["username"] }
+        { model: User, attributes: ["username", "img"] }
       ]
       }
     );
