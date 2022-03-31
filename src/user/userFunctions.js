@@ -27,10 +27,11 @@ exports.addUser = async (req, res) => {
     res.status(500).send({ err: error.message });
   }
 };
+
 exports.login = async (req, res) => {
   try {
      const token = await jwt.sign({id: req.user.id}, process.env.SECRET);
-     res.status(200).send({ user: req.user.username, token });
+     res.status(200).send({ user: req.user.username, token, userImg: req.user.img });
   } catch (error) {
     console.log(error);
     res.status(500).send({ err: error.message });
