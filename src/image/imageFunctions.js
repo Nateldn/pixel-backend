@@ -1,6 +1,5 @@
 //@ts-check
 
-const jwt = require("jsonwebtoken");
 const User = require("../user/userTable");
 const Image = require("./imageTable");
 
@@ -36,7 +35,7 @@ exports.getDetails = async (req, res) => {
     // console.log(imgDetails);
 
     let imgDetails = await Image.findOne({where: {id: parseInt(req.params.imgId)}, attributes: {exclude: ["img"]}, include: [
-      { model: User, attributes: ["username"] }
+      { model: User, attributes: ["username", "img"] }
     ] });
 
 
@@ -57,7 +56,7 @@ exports.getOneImage = async (req, res) => {
       where: {
         id: parseInt(req.params.imgId)
       }, include: [
-        { model: User, attributes: ["username"] }
+        { model: User, attributes: ["username", "img"] }
       ]
       }
     );
@@ -96,7 +95,14 @@ exports.getPubImages = async (req, res) => {
         { model: User, attributes: ["username"] }
       ]
     };
-      
+
+    if (req.params.who != "all") {
+      query.include = [
+        { model: User, attributes: ["username"], where: {username: req.params.who} }
+      ]
+    };
+
+
     if (req.params.page != 1) {
       query.offset = req.params.amount * (req.params.page - 1) ;
     };
