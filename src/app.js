@@ -34,7 +34,7 @@ const cors = require("cors");
 const userRouter = require("./user/userRoutes");
 const imageRouter = require("./image/imageRoutes");
 const app = express();
-const port = (process.env.PORT || 5000);
+const port = (process.env.PORT || 3306);
 
 
 // // app will use its .json() method to parse everything it receives as it will be json
